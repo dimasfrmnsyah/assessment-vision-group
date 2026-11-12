@@ -1,0 +1,24 @@
+[Unit]
+Description=CSharp Student REST API
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+Group=deploy
+StateDirectory=assessment-students
+WorkingDirectory=/var/lib/assessment-students
+ExecStart=/srv/csharp-assignment/StudentApi/StudentApi
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5100
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/assessment-students
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

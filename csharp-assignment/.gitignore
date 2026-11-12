@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+artifacts/
+*.log
+**/Data/
+
+# Local credentials and generated files
+.env.local
+.env.*.local
+*.log
+*.tar.gz
+.DS_Store
+coverage/
+test-results/
+playwright-report/

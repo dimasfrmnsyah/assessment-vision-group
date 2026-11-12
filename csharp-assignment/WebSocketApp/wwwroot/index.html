@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebSocket Echo Demo</title>
+</head>
+<body>
+  <h1>WebSocket Echo Demo</h1>
+  <p><a href="/docs/">Student REST API documentation</a></p>
+  <p id="status" role="status">Disconnected</p>
+  <button id="connect">Connect</button>
+  <button id="disconnect" disabled>Disconnect</button>
+  <form id="form">
+    <label for="message">Message</label>
+    <input id="message" value="Hello from C#!" required>
+    <button id="send" disabled>Send</button>
+  </form>
+  <pre id="log" aria-live="polite"></pre>
+  <script>
+    let socket;
+    const status = document.getElementById('status');
+    const connect = document.getElementById('connect');
+    const disconnect = document.getElementById('disconnect');
+    const send = document.getElementById('send');
+    const log = text => document.getElementById('log').textContent += text + '\n';
+    connect.onclick = () => {
+      connect.disabled = true;
+      status.textContent = 'Connecting...';
+      socket = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/ws`);
+      socket.onopen = () => {
+        status.textContent = 'Connected';
+        send.disabled = disconnect.disabled = false;
+      };
+      socket.onmessage = event => log('Server: ' + event.data);
+      socket.onerror = () => log('Connection error. Check that the server is running.');
+      socket.onclose = () => {
+        status.textContent = 'Disconnected';
+        send.disabled = disconnect.disabled = true;
+        connect.disabled = false;
+      };
+    };
+    disconnect.onclick = () => socket.close(1000, 'Goodbye');
+    document.getElementById('form').onsubmit = event => {
+      event.preventDefault();
+      if (socket?.readyState !== WebSocket.OPEN) return;
+      const message = document.getElementById('message').value;
+      socket.send(message);
+      log('You: ' + message);
+    };
+  </script>
+</body>
+</html>
